@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.bamboo.model.BambooData;
 import com.magikMaker.server.data.BambooUnitDataServer;
@@ -22,7 +23,7 @@ public class BambooSocket {
         
     public SocketChannel socketChannel = null;
     public BambooData bambooData = null;
-    private Logger log = Logger.getLogger(BambooSocket.class);
+    private Logger log = LogManager.getLogger(BambooSocket.class);
     
    
     public BambooSocket(SocketChannel _socketChannel, BambooData _bambooData) {

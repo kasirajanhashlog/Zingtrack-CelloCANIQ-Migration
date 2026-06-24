@@ -19,11 +19,14 @@ import java.nio.ByteBuffer;
 import java.text.NumberFormat;
 import java.util.Calendar;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+//import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+import java.util.HexFormat;
 
 public class TestClient implements Runnable {
 
 	/** Creates a new instance of TestClient */
+	// HexFormat instance for Java 25 hex conversions
+	private static final HexFormat hexFormat = HexFormat.of().withUpperCase();
 
 	private String hostName;
 	private int portNum;
@@ -81,7 +84,8 @@ public class TestClient implements Runnable {
 
 			strBuf.append(str);
 
-			out.write(HexBin.decode(strBuf.toString()));
+//			out.write(HexBin.decode(strBuf.toString()));
+			out.write(HexFormat.of().parseHex(strBuf.toString()));
 			System.out.println(" Mobile Unit : " + unitid
 					+ " -  Sending : " + str.getBytes().toString());
 			String recvStr = null;
@@ -97,7 +101,8 @@ public class TestClient implements Runnable {
 					ByteBuffer tempBuffer = ByteBuffer.allocate(28);
 					tempBuffer.put(bufferRead,acklen,28);
 					acklen = acklen + 28;
-					System.out.println("ACK : " + HexBin.encode(tempBuffer.array()));
+//					System.out.println("ACK : " + HexBin.encode(tempBuffer.array()));
+					System.out.println("ACK : " + hexFormat.formatHex(tempBuffer.array()));
 
 				}
 

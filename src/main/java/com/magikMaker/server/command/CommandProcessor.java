@@ -12,7 +12,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.bamboo.communication.BambooCommunicator;
 import com.magikMaker.server.data.BambooUnitDataServer;
@@ -21,7 +22,7 @@ import com.magikMaker.server.data.BambooUnitDataServer;
 public class CommandProcessor implements Runnable {
     
 	private BambooCommunicator communicator;
-    private Logger log = Logger.getLogger(CommandProcessor.class);    
+    private Logger log = LogManager.getLogger(CommandProcessor.class);    
     private Properties serverProperties;
     private String unitId;
     private String  commandText;

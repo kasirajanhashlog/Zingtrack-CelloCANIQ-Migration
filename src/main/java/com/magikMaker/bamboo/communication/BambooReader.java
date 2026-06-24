@@ -14,14 +14,16 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.bamboo.events.BambooEventProcessor;
 import com.magikMaker.bamboo.model.BambooData;
 import com.magikMaker.bamboo.model.BuzzerEventHashModel;
 import com.magikMaker.server.ServerDisplayListenner;
 import com.magikMaker.server.data.BambooUnitDataServer;
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+//import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+import java.util.HexFormat;
 
 /**
  * 
@@ -35,13 +37,15 @@ public class BambooReader implements Runnable {
 	private byte[] reply = "(Y)".getBytes();
 	//private ServerDisplayListenner displayListenner;
 	//private SelectionKey key;
-	private Logger log = Logger.getLogger(BambooReader.class);
+	private Logger log = LogManager.getLogger(BambooReader.class);
 	private Socket clientSocket;
 	// private BambooMessageLog bambooMessageLog;
 	private Hashtable<String,BuzzerEventHashModel> lBuzzerEventHash;
 	private int tempLimit = 10000;
 	private int humidityLimit = 10000;
 	private int waterLimit = 10000;
+	// HexFormat instance for Java 25 hex conversions
+	private static final HexFormat hexFormat = HexFormat.of().withUpperCase();
 	
 	public BambooReader(ServerDisplayListenner _displayListenner,
 			Socket clientSocket, BambooEventProcessor _bambooEventProcessor, 
@@ -111,7 +115,8 @@ public class BambooReader implements Runnable {
 					ArrayList<ByteBuffer> tempBufferList = new ArrayList<ByteBuffer>(); 
 					ByteBuffer tempBuffer = null;
 					
-					String recvdString = HexBin.encode(receivedDataBuffer.array());
+//					String recvdString = HexBin.encode(receivedDataBuffer.array());
+					String recvdString = hexFormat.formatHex(receivedDataBuffer.array());
 					String[] messageStrings = recvdString.split("4D4347");
 					
 					for(int i=0; i < messageStrings.length; i++) 
@@ -128,7 +133,8 @@ public class BambooReader implements Runnable {
 							currentData = temp.toString();
 
 							tempBuffer = ByteBuffer.allocate((currentData.length() / 2));
-							byte [] tempBuff = HexBin.decode(currentData);
+//							byte [] tempBuff = HexBin.decode(currentData);
+							byte [] tempBuff = hexFormat.parseHex(currentData);
 							log.info(" tempBuf size : " + tempBuff.length);
 							tempBuffer.put(tempBuff);
 							tempBufferList.add(tempBuffer);
@@ -142,7 +148,8 @@ public class BambooReader implements Runnable {
 								&& tempBufferList.get(i).get(2) == 71) {
 							// UnitId is 16 char long and starts at position 4 and ends
 							// at 20
-							String hexString = HexBin.encode(tempBufferList.get(i).array());
+//							String hexString = HexBin.encode(tempBufferList.get(i).array());
+							String hexString = hexFormat.formatHex(tempBufferList.get(i).array());
 
 							imei = String.valueOf(BambooData.parsePositionHex(
 									hexString, 10, 18));
@@ -190,7 +197,8 @@ public class BambooReader implements Runnable {
 											{
 												outputStream.write(baos.toByteArray());
 												//log.error(count + " ; ACK : " +  HexBin.encode(baos.toByteArray()));
-												log.error("ACK : " +  HexBin.encode(baos.toByteArray()));
+//												log.error("ACK : " +  HexBin.encode(baos.toByteArray()));
+												log.error("ACK : " +  hexFormat.formatHex(baos.toByteArray()));
 												log.info("Sending ACK to IMEI-Unit : "
 														+ imei
 														+ " - IP  : "
@@ -356,7 +364,8 @@ public class BambooReader implements Runnable {
 													buzzerCommand = "4D43475300D9BA2000040000000003031515000000000000E7";
 												}
 												
-												baos.write(HexBin.decode(buzzerCommand));
+//												baos.write(HexBin.decode(buzzerCommand));
+												baos.write(HexFormat.of().parseHex(buzzerCommand));
 												if(outputStream != null)
 												{
 													// send ACK to unit
@@ -364,7 +373,9 @@ public class BambooReader implements Runnable {
 														if(baos.size() > 0)
 														{
 															outputStream.write(baos.toByteArray());
-															log.error("Buzzer ACK : " +  HexBin.encode(baos.toByteArray())+ " ; Temp : " + buzzerHashMap.tempValue
+//															log.error("Buzzer ACK : " +  HexBin.encode(baos.toByteArray())+ " ; Temp : " + buzzerHashMap.tempValue
+//																	+ " ; Humidity : " + buzzerHashMap.humudityValue + " ; Water : " + buzzerHashMap.waterValue + " ; Buzzer "+ buzzerOnOff);
+															log.error("Buzzer ACK : " +  hexFormat.formatHex(baos.toByteArray())+ " ; Temp : " + buzzerHashMap.tempValue
 																	+ " ; Humidity : " + buzzerHashMap.humudityValue + " ; Water : " + buzzerHashMap.waterValue + " ; Buzzer "+ buzzerOnOff);
 															log.info("Sending ACK to IMEI-Unit : "
 																	+ imei

@@ -20,7 +20,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.bamboo.database.BambooDB;
 import com.magikMaker.bamboo.database.DatabasePoolManager;
@@ -39,7 +40,7 @@ public class BambooCommunicator extends TimerTask {
 	public String host;
 	public int port;
 	private DatabasePoolManager databasePoolManager;
-	private Logger log = Logger.getLogger(BambooCommunicator.class);
+	private Logger log = LogManager.getLogger(BambooCommunicator.class);
 	private Hashtable<String, BambooData> mGpsdataHash;
 	ArrayList<CanBusParamModel> lCanbusModel;
 	private Connection connBAMBOO;

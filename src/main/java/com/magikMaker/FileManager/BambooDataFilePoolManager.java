@@ -10,13 +10,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.server.data.BambooUnitDataServer;
 
 public class BambooDataFilePoolManager {
 
-	private Logger log = Logger.getLogger(BambooDataFilePoolManager.class);
+	private Logger log = LogManager.getLogger(BambooDataFilePoolManager.class);
 
 	private ThreadPoolExecutor threadPool;
 

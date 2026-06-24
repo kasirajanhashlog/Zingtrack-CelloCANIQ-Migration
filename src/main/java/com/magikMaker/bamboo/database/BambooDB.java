@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.claystone.server.heartbeat.HeartBeat;
 import com.magikMaker.FileManager.BambooDataFilePoolManager;
@@ -44,7 +45,7 @@ public class BambooDB implements Runnable {
 //	private ServerDisplayListenner displayListenner;
 //	private byte[] reply = "(Y)".getBytes();
 //	private SocketChannel socketChannel;
-	private Logger log = Logger.getLogger(BambooDB.class);
+	private Logger log = LogManager.getLogger(BambooDB.class);
 	public ArrayList<Module2ParamClass> lModuleParam;
 	private BambooDataFilePoolManager dataFilePoolManager = BambooDataFilePoolManager.getFileWriteManager();
 

@@ -20,7 +20,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.bamboo.communication.BambooCommunicator;
 import com.magikMaker.bamboo.communication.BambooReader;
@@ -38,7 +39,7 @@ public class BambooUnitDataServer implements Runnable {
 	private int dst;
 	private int port;
 	public static Date date;
-	private Logger log = Logger.getLogger(BambooUnitDataServer.class);
+	private Logger log = LogManager.getLogger(BambooUnitDataServer.class);
 	public static boolean isLog = false;
 	Calendar cal = Calendar.getInstance();
 	private BambooCommunicator bambooCommunicator;
@@ -218,7 +219,7 @@ public class BambooUnitDataServer implements Runnable {
                     }
                 }
             } catch (Exception ex) {
-//                Logger.getLogger(BambooUnitDataServer.class.getName()).log(Level.SEVERE, null, ex);
+//                LogManager.getLogger(BambooUnitDataServer.class.getName()).log(Level.SEVERE, null, ex);
 //                run = false;
 
 //                ex.printStackTrace();

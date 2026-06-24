@@ -91,7 +91,7 @@ public class BambooLogDB implements Runnable {
 
                 Thread.sleep(30000);
             } catch (InterruptedException ex1) {
-//                Logger.getLogger(BambooMessageLog.class.getName()).log(Level.SEVERE, null, ex1);
+//                LogManager.getLogger(BambooMessageLog.class.getName()).log(Level.SEVERE, null, ex1);
             }
 
             while (!bambooLogDatas.isEmpty()) {

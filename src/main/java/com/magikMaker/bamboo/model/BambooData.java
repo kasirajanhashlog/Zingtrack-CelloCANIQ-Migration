@@ -11,29 +11,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.magikMaker.bamboo.communication.CanBusParamModel;
 import com.magikMaker.bamboo.database.DatabasePoolManager;
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
-
+//import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+import java.util.HexFormat;
 public class BambooData implements Serializable {
 	/*
-	 * No No Parameter Type Size Pos. Example Extra Head 1 STX Char 1 0 ‘[‘ 2
-	 * Protocol Type Char 3 1 ‘MPQ’ 3 Unit ID Char 16 4 ‘??01012345678901’
-	 * Body(Data) 4 Date Char 6 20 ‘YYMMDD’ 5 Time Char 6 26 ‘HHMMSS’ 6 GPS
-	 * Status Char 1 32 ‘A’ or ‘V’ ‘A’:Fix / ‘V’:Invalid 7 Latitude Char 10 33
-	 * ‘+23.123456’ ‘+’:Ease / ‘-‘:West 8 Longitude Char 11 43 ‘+123.123456’
-	 * ‘+’:North / ‘-‘:South 9 Accumul. Char 7 54 ‘0000000’ m 10 Speed Char 3 61
-	 * ‘000’ ~ 255’ Km 11 Direction Char 3 64 ‘000’ ~ 359’ Degree 12 Start-up
-	 * Char 1 67 ‘0’ : Off / ‘1’ : On 13 Event Code Char 2 68 Refer to 3.5.5 14
+	 * No No Parameter Type Size Pos. Example Extra Head 1 STX Char 1 0 ï¿½[ï¿½ 2
+	 * Protocol Type Char 3 1 ï¿½MPQï¿½ 3 Unit ID Char 16 4 ï¿½??01012345678901ï¿½
+	 * Body(Data) 4 Date Char 6 20 ï¿½YYMMDDï¿½ 5 Time Char 6 26 ï¿½HHMMSSï¿½ 6 GPS
+	 * Status Char 1 32 ï¿½Aï¿½ or ï¿½Vï¿½ ï¿½Aï¿½:Fix / ï¿½Vï¿½:Invalid 7 Latitude Char 10 33
+	 * ï¿½+23.123456ï¿½ ï¿½+ï¿½:Ease / ï¿½-ï¿½:West 8 Longitude Char 11 43 ï¿½+123.123456ï¿½
+	 * ï¿½+ï¿½:North / ï¿½-ï¿½:South 9 Accumul. Char 7 54 ï¿½0000000ï¿½ m 10 Speed Char 3 61
+	 * ï¿½000ï¿½ ~ 255ï¿½ Km 11 Direction Char 3 64 ï¿½000ï¿½ ~ 359ï¿½ Degree 12 Start-up
+	 * Char 1 67 ï¿½0ï¿½ : Off / ï¿½1ï¿½ : On 13 Event Code Char 2 68 Refer to 3.5.5 14
 	 * Event Data Char 3 70 Zone ID 15 Input 1 ~ 4 Char 2 73 16 Input 2 ~ 8 Char
 	 * 2 75 17 Output 1 ~ 4 Char 2 77 18 Output 2 ~ 8 Char 2 79 19 ADC 1 Char 3
-	 * 81 ‘000’ 20 Battery Status Char 3 84 ‘000’ 21 Reservation Char 5 87
-	 * ‘00000’ 22 Ext. Flag Char 1 92 ‘N’ or ‘A’ 23 Ext. Length Char 2 93 ‘00’ ~
-	 * ‘50’ 24 Ext. Data Char N 95 Tail 25 ETX Char 1 95+N ‘]’
+	 * 81 ï¿½000ï¿½ 20 Battery Status Char 3 84 ï¿½000ï¿½ 21 Reservation Char 5 87
+	 * ï¿½00000ï¿½ 22 Ext. Flag Char 1 92 ï¿½Nï¿½ or ï¿½Aï¿½ 23 Ext. Length Char 2 93 ï¿½00ï¿½ ~
+	 * ï¿½50ï¿½ 24 Ext. Data Char N 95 Tail 25 ETX Char 1 95+N ï¿½]ï¿½
 	 */
 
+	// HexFormat instance for Java 25 hex conversions
+	private static final HexFormat hexFormat = HexFormat.of().withUpperCase();
+	
 	private static final long serialVersionUID = 2928231690465539380L;
 	public String mobileUnitID = "";
 	public Calendar gpsDate;
@@ -60,7 +64,7 @@ public class BambooData implements Serializable {
 	public String serverHost = "unknown";
 	public int dst;
 	public boolean online = true;
-	private Logger log = Logger.getLogger(BambooData.class);
+	private Logger log = LogManager.getLogger(BambooData.class);
 	private Calendar rDate = Calendar.getInstance();
 	public ArrayList<Module2ParamClass> lModuleParam;	
 	
@@ -89,7 +93,8 @@ public class BambooData implements Serializable {
 		this.gpsDate.set(8888, 8, 8, 8, 8, 8);
 		this.gprsDate = Calendar.getInstance();
 
-		String hexString = HexBin.encode(_messageIn.array());
+//		String hexString = HexBin.encode(_messageIn.array());
+		String hexString = hexFormat.formatHex(_messageIn.array());
 		if(hexString.startsWith("4D4347500B")){
 			String module_2 = hexString.substring(136, 138);
 			if(module_2.equalsIgnoreCase("02"))
@@ -238,7 +243,8 @@ public class BambooData implements Serializable {
 
 	public static byte[] getReply(ByteBuffer messageIn) {
 		
-		String hexString = HexBin.encode(messageIn.array());
+//		String hexString = HexBin.encode(messageIn.array());
+		String hexString = hexFormat.formatHex(messageIn.array());
 		// MCGP
 		String reply = "4D434750";
 		if(hexString.startsWith("4D4347500B")){
@@ -290,7 +296,9 @@ public class BambooData implements Serializable {
 		}
 		
 		reply += getCheckSum(reply);
-		return HexBin.decode(reply);
+//		return HexBin.decode(reply);
+		return HexFormat.of().parseHex(reply);
+		
 	}
 
 	public static String getCheckSum(String hexString) {
@@ -344,7 +352,8 @@ public class BambooData implements Serializable {
 	
 	private boolean setGPSDateType11(int dst) throws Exception {
 		boolean result = true;
-		String hexString = HexBin.encode(receivedMessageStr.array());
+//		String hexString = HexBin.encode(receivedMessageStr.array());
+		String hexString = hexFormat.formatHex(receivedMessageStr.array());
 		String dateTimeStr = hexString.substring(100, 120);
 		if(dateTimeStr.substring(0, 2).equals("07") == true){
 			String dateValid = dateTimeStr.substring(6, 8);
@@ -387,7 +396,8 @@ public class BambooData implements Serializable {
 	public boolean translateType11(ByteBuffer messageIn) {
 		boolean result = true;
 		try {
-			String hexString = HexBin.encode(messageIn.array());
+//			String hexString = HexBin.encode(messageIn.array());
+			String hexString = hexFormat.formatHex(messageIn.array());
 
 			int messageType = Integer.parseInt(hexString.substring(8, 10), 16);
 			if(messageType == 11){ 
@@ -539,7 +549,8 @@ public class BambooData implements Serializable {
 	public boolean translate(ByteBuffer messageIn) {
 		boolean result = true;
 		try {
-			String hexString = HexBin.encode(messageIn.array());
+//			String hexString = HexBin.encode(messageIn.array());
+			String hexString = hexFormat.formatHex(messageIn.array());
 
 			int messageType = Integer.parseInt(hexString.substring(8, 10), 16);
 			if(messageType == 0){ 
@@ -677,7 +688,8 @@ public class BambooData implements Serializable {
 	public boolean translateMod2(ByteBuffer messageIn) {
 		boolean result = true;
 		try {
-			String hexString = HexBin.encode(messageIn.array());
+//			String hexString = HexBin.encode(messageIn.array());
+			String hexString = hexFormat.formatHex(messageIn.array());
 
 			int messageType = Integer.parseInt(hexString.substring(8, 10), 16);
 			if(messageType == 11){ 
@@ -892,7 +904,8 @@ public class BambooData implements Serializable {
 
 	private boolean setGPSDate(int dst) throws Exception {
 		boolean result = true;
-		String hexString = HexBin.encode(receivedMessageStr.array());
+//		String hexString = HexBin.encode(receivedMessageStr.array());
+		String hexString = hexFormat.formatHex(receivedMessageStr.array());
 		int year = parsePositionHex(hexString, 134, 138);
 		int month = receivedMessageStr.get(66);
 		int day = receivedMessageStr.get(65);
